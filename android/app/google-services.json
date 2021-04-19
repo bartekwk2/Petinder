@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "180699060248",
+    "firebase_url": "https://adoptionapp-20c5d-default-rtdb.firebaseio.com",
+    "project_id": "adoptionapp-20c5d",
+    "storage_bucket": "adoptionapp-20c5d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:180699060248:android:19e05b85542a029751cb6d",
+        "android_client_info": {
+          "package_name": "com.example.GoogleMaps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "180699060248-g942k0jf6njp8csol9c334sg3ask65tr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.GoogleMaps",
+            "certificate_hash": "06072cad42bafca8dd722aa30ac2e9512ff424d5"
+          }
+        },
+        {
+          "client_id": "180699060248-vt7ai1q78l8m31g80qpim5usv3qorls8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALqPLVBJ2coZVjOC-w2eOAk-vWHPZDI-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "180699060248-vt7ai1q78l8m31g80qpim5usv3qorls8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
