@@ -52,7 +52,8 @@ class _SearchBodyState extends State<SearchBody> {
         if (friendState is ClickedEndSearchState) {
           FocusScope.of(context).unfocus();
         } else if (friendState is AddingFriendSuccessState) {
-          showSuccess(context, "Pomylnie dodanao znajomego",'Dodawanie udane!');
+          showSuccess(
+              context, "Pomylnie dodanao znajomego", 'Dodawanie udane!');
         }
       }, builder: (context, friendState) {
         return Stack(
@@ -113,7 +114,8 @@ class _SearchBodyState extends State<SearchBody> {
                               if (friendState.userNames.isNotEmpty) {
                                 return Container(
                                   width: double.infinity,
-                                  height: 60.0 * friendState.userNames.length+20,
+                                  height:
+                                      60.0 * friendState.userNames.length + 20,
                                   child: ListView.builder(
                                     itemCount: friendState.userNames.length,
                                     itemBuilder: (context, index) {
@@ -244,9 +246,8 @@ class _SearchBodyState extends State<SearchBody> {
   Widget searchResults(SearchState friendState) {
     return Material(
       color: Colors.white,
-          child: Builder(
+      child: Builder(
         builder: (_) {
-
           if (friendState is! ClickedEndSearchState) {
             if (friendState is SearchErrorState) {
               print("ERROR ${friendState.props}");
@@ -257,8 +258,10 @@ class _SearchBodyState extends State<SearchBody> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                   Image.asset('images/ab.jpg'),
-                   SizedBox(height: 15,),
+                  Image.asset('images/ab.jpg'),
+                  SizedBox(
+                    height: 15,
+                  ),
                   Text(
                     'Znajdź użytkowników',
                     style: Theme.of(context).textTheme.headline5,
@@ -269,20 +272,21 @@ class _SearchBodyState extends State<SearchBody> {
           } else if (friendState is ClickedEndSearchState) {
             if (friendState.friendChosen == null) {
               return Padding(
-                padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.2 ),
-                child:  Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                   Image.asset('images/ab.jpg'),
-                   SizedBox(height: 15,),
-                  Text(
-                    'Znajdź użytkowników',
-                    style: Theme.of(context).textTheme.headline5,
-                  )
-                ],
-              )
-              );
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.2),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset('images/ab.jpg'),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Text(
+                        'Znajdź użytkowników',
+                        style: Theme.of(context).textTheme.headline5,
+                      )
+                    ],
+                  ));
             } else {
               var photos = friendState.friendChosen.photosRef;
               var mediaQuery = MediaQuery.of(context).size;

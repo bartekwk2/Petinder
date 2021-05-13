@@ -1,5 +1,4 @@
 import 'package:Petinder/bottom_navigation/bottom_navigation_bloc/bottom_navigation_bloc.dart';
-import 'package:Petinder/bottom_navigation/bottom_navigation_bloc/bottom_navigation_event.dart';
 import 'package:Petinder/bottom_navigation/bottom_navigation_bloc/bottom_navigation_state.dart';
 import 'package:Petinder/common/common.dart';
 import 'package:Petinder/di/injection_container.dart';

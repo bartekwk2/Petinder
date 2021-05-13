@@ -221,9 +221,11 @@ class _ChatRoomState extends State<ChatRoom> {
           message: data['content'],
           senderID: data['senderChatID'],
           receiverID: data['receiverChatID']);
-      context
-          .read<SendMessageBloc>()
-          .add(MessageReceivedEvent(message: incomeMessage));
+      if (incomeMessage.senderID == widget.notMyID) {
+        context
+            .read<SendMessageBloc>()
+            .add(MessageReceivedEvent(message: incomeMessage));
+      }
     });
     socketIO.connect();
   }

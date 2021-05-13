@@ -35,7 +35,6 @@ class _ProfilePageState extends State<PetProfilePage>
   int currentPage = 0;
   double screenHeight = 0;
   ScrollController _controllerScroll;
-
   Pet pet;
   String myId = "";
 
@@ -120,11 +119,9 @@ class _ProfilePageState extends State<PetProfilePage>
                       children: [
                         CachedNetworkImage(
                           imageUrl:
-                              "https://petsyy.herokuapp.com/image/${widget.pet.imageRefs.first}",
+                              "https://petsyy.herokuapp.com/image/${widget.pet.imageRefs[index]}",
                           fit: BoxFit.cover,
                         ),
-                        Positioned(
-                            top: 0, left: 0, child: buildReturnButton(context))
                       ],
                     );
                   },
@@ -399,7 +396,8 @@ class _ProfilePageState extends State<PetProfilePage>
                     ),
                   ),
                 ),
-              )
+              ),
+              Positioned(top: 0, left: 0, child: buildReturnButton(context))
             ],
           ),
         ),

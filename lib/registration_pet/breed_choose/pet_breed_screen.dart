@@ -1,4 +1,3 @@
-
 import 'package:Petinder/registration_pet/fistScreen/pet_cart.dart';
 import 'package:Petinder/repository/petNames.dart';
 import 'package:flutter/material.dart';
@@ -88,7 +87,12 @@ class _PetBreedScreenrState extends State<PetBreedScreen> {
           future: petNames.getPetNames(widget.searchType),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
-              getAlphabetsFromStringList(snapshot.data
+
+              List<dynamic> pets = snapshot.data;
+              pets.sort((a, b) => (a.name.toString())
+                  .compareTo(b.name.toString()));
+
+              getAlphabetsFromStringList(pets
                   .map((petName) => petName.name.toString())
                   .toList());
               return Stack(
@@ -96,9 +100,9 @@ class _PetBreedScreenrState extends State<PetBreedScreen> {
                   ListView.builder(
                     controller: _controller,
                     itemExtent: 130,
-                    itemCount: snapshot.data.length,
+                    itemCount: pets.length,
                     itemBuilder: (context, index) {
-                      dynamic petName = snapshot.data[index];
+                      dynamic petName = pets[index];
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(
                           15.0,
@@ -144,8 +148,6 @@ class _PetBreedScreenrState extends State<PetBreedScreen> {
       sum += entry.value;
       lettersAppearance[entry.key] = sum - entry.value + 1;
     }
-
-    alphabetsLetters.sort((a, b) => a.compareTo(b));
 
     List<Widget> alphabetWidget =
         alphabetsLetters.map((letter) => _getAlphabetItem(letter)).toList();

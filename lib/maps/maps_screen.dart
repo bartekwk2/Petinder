@@ -256,122 +256,105 @@ class _MapsScreenState extends State<MapsScreen> {
     if (breed == null) {
       breed = "";
     }
-    return AnimatedBuilder(
-      animation: pageController,
-      builder: (BuildContext context, Widget widget) {
-        double value = 1;
-        if (pageController.position.haveDimensions) {
-          value = pageController.page - index;
-          value = (1 - (value.abs() * 0.3) + 0.06).clamp(0.0, 1.0);
-        }
-        return Center(
-          child: SizedBox(
-            height: Curves.easeInOut.transform(value) * 425.0,
-            width: Curves.easeInOut.transform(value) * 350.0,
-            child: widget,
-          ),
-        );
-      },
-      child: InkWell(
-          onTap: () {
-            var petData = {"pet": pet,'swipe' : false};
-            Navigator.of(context)
-                .pushNamed(RouteConstant.profileDetail, arguments: petData);
-          },
-          child: Stack(children: [
-            Container(
-                margin: EdgeInsets.symmetric(
-                  horizontal: 15.0,
-                  vertical: 15.0,
-                ),
-                width: 275.0,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black54,
-                        offset: Offset(0.0, 4.0),
-                        blurRadius: 10.0,
-                      ),
-                    ]),
-                child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.white),
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 45),
-                      child: Column(children: [
-                        featureElement("images/petProfile/hourglass2.svg",
-                            "${pet.age} lat", 105),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        featureElement(
-                            "images/petProfile/gender.svg",
-                            "${genderChosen(pet.gender).replaceFirst(", ", "")}",
-                            105),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        featureElement("images/petProfile/worldwide.svg",
-                            "${pet.city}, ${pet.locationString}", 10),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        featureElement(
-                            "images/petProfile/paw.svg",
-                            "${specieChosen(pet.typeOfPet).replaceFirst(", ", "")} $breed",
-                            10),
-                      ]),
-                    ))),
-            Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 80, top: 30),
-                child: Text(pet.name,
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 22,
-                        fontFamily: "GothamRounded",
-                        fontWeight: FontWeight.bold)),
+    return InkWell(
+        onTap: () {
+          var petData = {"pet": pet,'swipe' : false};
+          Navigator.of(context)
+              .pushNamed(RouteConstant.profileDetail, arguments: petData);
+        },
+        child: Stack(children: [
+          Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: 15.0,
+                vertical: 15.0,
               ),
-            ),
-            Container(
-                height: 110.0,
-                width: 110.0,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                    image: DecorationImage(
-                        image: CachedNetworkImageProvider(
-                            "https://petsyy.herokuapp.com/image/${pet.imageRefs.first}"),
-                        fit: BoxFit.cover))),
-            Padding(
-              padding: const EdgeInsets.only(right: 24),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                      color: decideColor(pet.typeOfPetOwner),
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10.0),
-                          bottomLeft: Radius.circular(10.0))),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: SvgPicture.asset(
-                      assetOriginChosen(pet.typeOfPetOwner),
-                      width: 20,
-                      height: 20,
-                      color: Colors.black87.withOpacity(0.7),
+              width: 275.0,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black54,
+                      offset: Offset(0.0, 4.0),
+                      blurRadius: 10.0,
                     ),
+                  ]),
+              child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Colors.white),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 45),
+                    child: Column(children: [
+                      featureElement("images/petProfile/hourglass2.svg",
+                          "${pet.age} lat", 105),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      featureElement(
+                          "images/petProfile/gender.svg",
+                          "${genderChosen(pet.gender).replaceFirst(", ", "")}",
+                          105),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      featureElement("images/petProfile/worldwide.svg",
+                          "${pet.city}, ${pet.locationString}", 10),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      featureElement(
+                          "images/petProfile/paw.svg",
+                          "${specieChosen(pet.typeOfPet).replaceFirst(", ", "")} $breed",
+                          10),
+                    ]),
+                  ))),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 80, top: 30),
+              child: Text(pet.name,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontFamily: "GothamRounded",
+                      fontWeight: FontWeight.bold)),
+            ),
+          ),
+          Container(
+              height: 110.0,
+              width: 110.0,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                  image: DecorationImage(
+                      image: CachedNetworkImageProvider(
+                          "https://petsyy.herokuapp.com/image/${pet.imageRefs.first}"),
+                      fit: BoxFit.cover))),
+          Padding(
+            padding: const EdgeInsets.only(right: 24),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                    color: decideColor(pet.typeOfPetOwner),
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10.0),
+                        bottomLeft: Radius.circular(10.0))),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: SvgPicture.asset(
+                    assetOriginChosen(pet.typeOfPetOwner),
+                    width: 20,
+                    height: 20,
+                    color: Colors.black87.withOpacity(0.7),
                   ),
                 ),
               ),
-            )
-          ])),
-    );
+            ),
+          )
+        ]));
   }
 
   Widget featureElement(String asset, String feature, double padding) {

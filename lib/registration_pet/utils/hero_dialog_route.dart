@@ -2,13 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-/// {@template hero_dialog_route}
-/// Custom [PageRoute] that creates an overlay dialog (popup effect).
-///
-/// Best used with a [Hero] animation.
-/// {@endtemplate}
 class HeroDialogRoute<T> extends PageRoute<T> {
-  /// {@macro hero_dialog_route}
   HeroDialogRoute({
     @required WidgetBuilder builder,
     RouteSettings settings,

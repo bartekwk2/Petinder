@@ -57,10 +57,22 @@ class LocationRepository {
     String country = addressArray.last;
     String city = addressArray[1];
     if (city.contains(" ")) {
-      city = city.split(" ").last;
+      var words = city.split(" ");
+      if (words.length > 3) {
+        city = "${words[1]} ";
+        words.asMap().forEach((key, value) {
+          if (key > 1 && key<words.length-1) {
+            city += "${value[0]} ";
+          }
+          if (key == words.length - 1) {
+            city += "$value ";
+          }
+        });
+      }
     }
+    city = city.trim();
+    country = country.trim();
     await locationBox.put("country", country);
     await locationBox.put("city", city);
-    print("ADRESS $country $city");
   }
 }

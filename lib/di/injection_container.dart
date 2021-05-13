@@ -23,7 +23,6 @@ import 'package:Petinder/swipe/swipe_fetching_bloc/swipe_fetching_repository.dar
 import 'package:Petinder/welcome/auth/auth_bloc/auth_bloc.dart';
 import 'package:Petinder/welcome/auth/auth_bloc/auth_repository.dart';
 import 'package:Petinder/welcome/google_sign_in_repository.dart';
-
 import 'package:get_it/get_it.dart';
 
 final inject = GetIt.instance;

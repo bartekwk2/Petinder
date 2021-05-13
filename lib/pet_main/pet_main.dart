@@ -163,7 +163,7 @@ class _PetMainScreenState extends State<PetMainScreen> {
           return GestureDetector(
             onTap: () {
               var pet = petPaginationState.pets[index];
-              var arguments = {"pet": pet,'swipe' : false};
+              var arguments = {"pet": pet, 'swipe': false};
               Navigator.of(context)
                   .pushNamed(RouteConstant.profileDetail, arguments: arguments);
             },
@@ -216,6 +216,7 @@ class _PetMainScreenState extends State<PetMainScreen> {
           ),
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             photosRef.isEmpty
                 ? Padding(
@@ -243,10 +244,9 @@ class _PetMainScreenState extends State<PetMainScreen> {
                     ),
                   ),
             SizedBox(
-              width: MediaQuery.of(context).size.width / 9,
+              width: 10,
             ),
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
                   height: 10,

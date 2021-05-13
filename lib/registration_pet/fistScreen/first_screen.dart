@@ -76,7 +76,9 @@ class _FirstScreenState extends State<FirstScreen> {
                   },
                 ),
               ),
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               updateIndicators(registrationState),
               SizedBox(
                 height: 25,
@@ -181,9 +183,11 @@ class _FirstScreenState extends State<FirstScreen> {
                     Icon(
                       Icons.location_on,
                       color: Theme.of(context).primaryColor,
-                      size:30.0,
+                      size: 30.0,
                     ),
-                    SizedBox(height: 10,)
+                    SizedBox(
+                      height: 10,
+                    )
                   ],
                 ),
               ),
