@@ -37,7 +37,6 @@ class PetPaginationBloc extends Bloc<PetPaginationEvent, PetPaginationState> {
     } else if (event is ClearPetsEvent) {
       yield state.copyWith(pets: []);
     } else if (event is ReloadPetsEvent) {
-      print("isAdded ${event.isAdded}");
       yield state.copyWith(isAdded: event.isAdded, showSheet: true);
       newQuery = true;
       page = 1;
@@ -59,10 +58,7 @@ class PetPaginationBloc extends Bloc<PetPaginationEvent, PetPaginationState> {
     }
 
     if (firstTime && state.firstTime == false) {
-      print("A");
-      //yield state.copyWith(isLoading: false, isError: false, firstTime: false);
     } else {
-      print("B");
       if (event.isFromScroll) {
         newQuery = false;
       } else {
@@ -81,7 +77,6 @@ class PetPaginationBloc extends Bloc<PetPaginationEvent, PetPaginationState> {
     dynamic myLocation = myLocationBox.get("positionMap");
     var myLat = myLocation["lat"];
     var myLong = myLocation["long"];
-    print("QUERY $query");
     if (query == "{}") {
       response =
           await paginationRepository.getPets(myLong, myLat, 800, 8, page);

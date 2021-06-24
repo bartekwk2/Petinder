@@ -9,12 +9,13 @@ import 'package:rxdart/rxdart.dart';
 class RegistrationPetBloc extends Bloc<RegisterPetEvent, RegistrationPetState> {
   final RegistrationPetRepository registrationPetRepository;
 
-    @override
+  @override
   Stream<Transition<RegisterPetEvent, RegistrationPetState>> transformEvents(
     Stream<RegisterPetEvent> events,
     TransitionFunction<RegisterPetEvent, RegistrationPetState> transitionFn,
   ) {
-    final nonDebounceStream = events.where((event) => event is! SubmitAddingPetEvent);
+    final nonDebounceStream =
+        events.where((event) => event is! SubmitAddingPetEvent);
     final debounceStream = events
         .where((event) => event is SubmitAddingPetEvent)
         .throttleTime(Duration(milliseconds: 2000));
@@ -89,10 +90,14 @@ class RegistrationPetBloc extends Bloc<RegisterPetEvent, RegistrationPetState> {
     } else if (event is ChooseFearfullLevelEvent) {
       yield state.copyWith(fearfull: event.level);
     } else if (event is SubmitAddingPetEvent) {
+      yield state.copyWith(loadingSubmit: true);
       String petID = await registrationPetRepository.submitPetAdding(state);
       bool canGo =
           await registrationPetRepository.uploadImages(state.imagesPath, petID);
-      yield state.copyWith(canGo: canGo);
+      if (canGo) {
+        yield RegistrationPetState.empty();
+      }
+      yield state.copyWith(canGo: canGo, loadingSubmit: false);
     } else if (event is RefreshCanGoEvent) {
       yield state.copyWith(canGo: false);
     }

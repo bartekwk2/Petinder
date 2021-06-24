@@ -1,15 +1,17 @@
 import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
+import 'package:location/location.dart' as locationLib;
 
 class LocationRepository {
   Future<String> determinePosition() async {
-    bool serviceEnabled;
+    bool serviceEnabled = false;
     LocationPermission permission;
+    locationLib.Location location = locationLib.Location();
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
+    while (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
     }
 
     permission = await Geolocator.checkPermission();
@@ -61,7 +63,7 @@ class LocationRepository {
       if (words.length > 3) {
         city = "${words[1]} ";
         words.asMap().forEach((key, value) {
-          if (key > 1 && key<words.length-1) {
+          if (key > 1 && key < words.length - 1) {
             city += "${value[0]} ";
           }
           if (key == words.length - 1) {

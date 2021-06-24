@@ -42,7 +42,7 @@ class _SecondScreenState extends State<SecondScreen> {
             ),
             vaccinateCard(registrationState),
             SizedBox(
-              height: 30,
+              height: 80,
             ),
           ],
         ),

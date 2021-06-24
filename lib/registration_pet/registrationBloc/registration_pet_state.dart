@@ -31,6 +31,7 @@ class RegistrationPetState {
   final double indipendent;
   final double fearfull;
 
+  final bool loadingSubmit;
   final bool canGo;
 
   factory RegistrationPetState.empty() {
@@ -61,7 +62,8 @@ class RegistrationPetState {
       wellBehaved: 3.0,
       indipendent: 3.0,
       fearfull: 3.0,
-      canGo : false,
+      canGo: false,
+      loadingSubmit : false
     );
   }
 
@@ -93,6 +95,7 @@ class RegistrationPetState {
     this.indipendent,
     this.fearfull,
     this.canGo,
+    this.loadingSubmit
   });
 
   RegistrationPetState copyWith({
@@ -124,6 +127,7 @@ class RegistrationPetState {
     double wellBehaved,
     double fearfull,
     bool canGo,
+    bool loadingSubmit
   }) {
     return RegistrationPetState(
       coordinates: coordinates ?? this.coordinates,
@@ -152,7 +156,8 @@ class RegistrationPetState {
       wellBehaved: wellBehaved ?? this.wellBehaved,
       indipendent: indipendent ?? this.indipendent,
       fearfull: fearfull ?? this.fearfull,
-      canGo : canGo ?? this.canGo,
+      canGo: canGo ?? this.canGo,
+      loadingSubmit : loadingSubmit ?? this.loadingSubmit
     );
   }
 }

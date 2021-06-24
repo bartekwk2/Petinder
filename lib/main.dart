@@ -8,9 +8,11 @@ import 'package:hive/hive.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'di/injection_container.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   var documentDirectory = await getApplicationDocumentsDirectory();
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: documentDirectory,
@@ -40,7 +42,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
 
     var myID = Hive.box("IsLogin").get("id");
-    print(myID);
     if (myID.isNotEmpty) {
       if (state == AppLifecycleState.inactive) {
         Future.delayed(Duration.zero, () async {
@@ -58,6 +59,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    
     return FutureBuilder(
         future: Hive.openBox(
           'Location',

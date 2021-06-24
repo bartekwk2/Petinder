@@ -11,6 +11,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_tindercard/flutter_tindercard.dart';
 import 'package:hive/hive.dart';
+import 'package:lottie/lottie.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class SwipeScreen extends StatefulWidget {
   @override
@@ -24,6 +26,31 @@ class _ExampleHomePageState extends State<SwipeScreen>
   int countPages = 1;
   List<dynamic> pets;
   String id = Hive.box("IsLogin").get("id");
+  InterstitialAd _interstitialAd;
+  bool _isInterstitialAdReady = false;
+
+  @override
+  void initState() {
+    _interstitialAd = InterstitialAd(
+      adUnitId: "ca-app-pub-2430907631837756/4586171487",
+      request: AdRequest(),
+      listener: AdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            _isInterstitialAdReady = true;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load an interstitial ad: ${err.message}');
+          _isInterstitialAdReady = false;
+          ad.dispose();
+        },
+        onAdClosed: (_) {},
+      ),
+    );
+    _interstitialAd.load();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +60,9 @@ class _ExampleHomePageState extends State<SwipeScreen>
           listener: (context, swipeState) {
         if (swipeState is FetchPetsState) {
           pets = swipeState.pets;
+          if (_isInterstitialAdReady) {
+            _interstitialAd.show();
+          }
         } else if (swipeState is SwipingDisableState) {
           fetchMorePets(context);
         }
@@ -43,223 +73,251 @@ class _ExampleHomePageState extends State<SwipeScreen>
   }
 
   Widget _renderSwipeScreen(SwipeFetchingState swipeState) {
-    print("STATE $swipeState");
     return Stack(children: [
-      Positioned(
-        bottom: 30,
-        left: 0,
-        right: 0,
-        child: Container(
-          height: MediaQuery.of(context).size.height * 0.8,
-          child: TinderSwapCard(
-            orientation: AmassOrientation.TOP,
-            totalNum: _decideCardsCount(swipeState),
-            stackNum: 4,
-            swipeEdge: 5.0,
-            maxWidth: MediaQuery.of(context).size.width * 0.90,
-            maxHeight: MediaQuery.of(context).size.width * 1.2,
-            minWidth: MediaQuery.of(context).size.width * 0.75,
-            minHeight: MediaQuery.of(context).size.width * 1.19,
-            //
-            cardBuilder: (context, index) {
-              Pet pet = pets[index];
-              var breed = pet.petBreed;
-              if (breed == null) {
-                breed = "";
-              }
-              return InkWell(
-                onTap: () {
-                  Navigator.pushNamed(context, RouteConstant.profileDetail,
-                      arguments: {
-                        'pet': pet,
-                        'swipe' : true
-                      });
-                },
-                child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    child: Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.topCenter,
-                          child: Hero(
-                            tag: index,
-                            child: Container(
-                              height: MediaQuery.of(context).size.width * 0.80,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(20.0),
-                                    topRight: Radius.circular(20.0),
-                                  ),
-                                  image: DecorationImage(
-                                      image: CachedNetworkImageProvider(
-                                          "https://petsyy.herokuapp.com/image/${pet.imageRefs.first}"),
-                                      fit: BoxFit.cover)),
-                            ),
-                          ),
-                        ),
-                        Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Container(
-                              height: MediaQuery.of(context).size.width * 0.47,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      offset: Offset(-1.0, 1.0),
-                                      blurRadius: 1.0,
-                                    ),
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      offset: Offset(1.0, 0.0),
-                                      blurRadius: 1.0,
-                                    ),
-                                  ],
-                                  borderRadius: BorderRadius.circular(20.0)),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(15, 20, 0, 0),
-                                    child: Text(
-                                      "${pet.name}, ${pet.age}",
-                                      style: TextStyle(
-                                          fontSize: 26,
-                                          fontFamily: "GothamRounded",
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(15, 17, 0, 0),
-                                    child: Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                          'images/petProfile/paw.svg',
-                                          width: 20,
-                                          height: 20,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          "${specieChosen(pet.typeOfPet).replaceFirst(", ", "")} $breed",
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontFamily: "GothamRounded"),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(15, 10, 0, 0),
-                                    child: Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                          'images/petProfile/pet-house.svg',
-                                          width: 20,
-                                          height: 20,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          "${originChosen(pet.typeOfPetOwner).replaceFirst(", ", "")}",
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontFamily: "GothamRounded"),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(15, 10, 0, 0),
-                                    child: Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                          'images/drei.svg',
-                                          width: 20,
-                                          height: 20,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          "${pet.city}, ${pet.locationString}",
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontFamily: "GothamRounded"),
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )),
-                        Positioned(
-                          bottom: 20,
-                          right: 20,
-                          child: Container(
-                            width: 90,
-                            height: 90,
-                            child: SvgPicture.asset(
-                              'images/petProfile/paws.svg',
-                              color: Colors.black.withAlpha(15),
-                            ),
-                          ),
-                        )
-                      ],
-                    )),
-              );
-            },
-            //
-            cardController: controller = CardController(),
-            swipeUpdateCallback: (DragUpdateDetails details, Alignment align) {
-              if (swipeState is! NoMorePetsState) {
-                if (align.x < 0) {
-                  context.read<SwipeFetchingBloc>().add(SwipeLeftEvent());
-                } else if (align.x > 0) {
-                  context.read<SwipeFetchingBloc>().add(SwipeRightEvent());
-                }
-              }
-            },
-            swipeCompleteCallback:
-                (CardSwipeOrientation orientation, int index) {
-              context.read<SwipeFetchingBloc>().add(SwipingEnabledEvent());
-
-              if (orientation == CardSwipeOrientation.LEFT) {
-                Pet pet = pets[index];
-                context.read<SwipeFetchingBloc>().add(
-                    AddToFavoriteOrRejectedEvent(
-                        sId: id, petType: "Disliked", petRef: pet.sId));
-              } else if (orientation == CardSwipeOrientation.RIGHT) {
-                Pet pet = pets[index];
-                context.read<SwipeFetchingBloc>().add(
-                    AddToFavoriteOrRejectedEvent(
-                        sId: id, petType: "Liked", petRef: pet.sId));
-              }
-
-              if (index + 1 == pets.length) {
-                context.read<SwipeFetchingBloc>().add(SwipingDisableEvent());
-              }
-            },
-          ),
-        ),
-      ),
+      swipeState is NoMorePetsState ? noMorePets() : petCards(swipeState),
       Positioned(
           left: 0,
           right: 0,
           bottom: 23,
           child: getBottomSheet(controller, swipeState)),
-      buildLikeBadge(swipeState)
+      buildLikeBadge(swipeState),
     ]);
+  }
+
+  Widget petCards(SwipeFetchingState swipeState) {
+    return Positioned(
+      bottom: 30,
+      left: 0,
+      right: 0,
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.8,
+        child: TinderSwapCard(
+          orientation: AmassOrientation.TOP,
+          totalNum: _decideCardsCount(swipeState),
+          stackNum: 4,
+          swipeEdge: 5.0,
+          maxWidth: MediaQuery.of(context).size.width * 0.90,
+          maxHeight: MediaQuery.of(context).size.width * 1.2,
+          minWidth: MediaQuery.of(context).size.width * 0.75,
+          minHeight: MediaQuery.of(context).size.width * 1.19,
+          //
+          cardBuilder: (context, index) {
+            Pet pet = pets[index];
+            var breed = pet.petBreed;
+            if (breed == null) {
+              breed = "";
+            }
+            return InkWell(
+              onTap: () {
+                Navigator.pushNamed(context, RouteConstant.profileDetail,
+                    arguments: {'pet': pet, 'swipe': true});
+              },
+              child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: Hero(
+                          tag: index,
+                          child: Container(
+                            height: MediaQuery.of(context).size.width * 0.80,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20.0),
+                                  topRight: Radius.circular(20.0),
+                                ),
+                                image: DecorationImage(
+                                    image: CachedNetworkImageProvider(
+                                        "https://petsyy.herokuapp.com/image/${pet.imageRefs.first}"),
+                                    fit: BoxFit.cover)),
+                          ),
+                        ),
+                      ),
+                      Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                            height: MediaQuery.of(context).size.width * 0.47,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    offset: Offset(-1.0, 1.0),
+                                    blurRadius: 1.0,
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    offset: Offset(1.0, 0.0),
+                                    blurRadius: 1.0,
+                                  ),
+                                ],
+                                borderRadius: BorderRadius.circular(20.0)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(15, 20, 0, 0),
+                                  child: Text(
+                                    "${pet.name}, ${pet.age}",
+                                    style: TextStyle(
+                                        fontSize: 26,
+                                        fontFamily: "GothamRounded",
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(15, 17, 0, 0),
+                                  child: Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                        'images/petProfile/paw.svg',
+                                        width: 20,
+                                        height: 20,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        "${specieChosen(pet.typeOfPet).replaceFirst(", ", "")} $breed",
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontFamily: "GothamRounded"),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(15, 10, 0, 0),
+                                  child: Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                        'images/petProfile/pet-house.svg',
+                                        width: 20,
+                                        height: 20,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        "${originChosen(pet.typeOfPetOwner).replaceFirst(", ", "")}",
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontFamily: "GothamRounded"),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(15, 10, 0, 0),
+                                  child: Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                        'images/drei.svg',
+                                        width: 20,
+                                        height: 20,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        "${pet.city}, ${pet.locationString}",
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontFamily: "GothamRounded"),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          )),
+                      Positioned(
+                        bottom: 20,
+                        right: 20,
+                        child: Container(
+                          width: 90,
+                          height: 90,
+                          child: SvgPicture.asset(
+                            'images/petProfile/paws.svg',
+                            color: Colors.black.withAlpha(15),
+                          ),
+                        ),
+                      )
+                    ],
+                  )),
+            );
+          },
+          //
+          cardController: controller = CardController(),
+          swipeUpdateCallback: (DragUpdateDetails details, Alignment align) {
+            if (swipeState is! NoMorePetsState) {
+              if (align.x < 0) {
+                context.read<SwipeFetchingBloc>().add(SwipeLeftEvent());
+              } else if (align.x > 0) {
+                context.read<SwipeFetchingBloc>().add(SwipeRightEvent());
+              }
+            }
+          },
+          swipeCompleteCallback: (CardSwipeOrientation orientation, int index) {
+            context.read<SwipeFetchingBloc>().add(SwipingEnabledEvent());
+
+            if (orientation == CardSwipeOrientation.LEFT) {
+              Pet pet = pets[index];
+              context.read<SwipeFetchingBloc>().add(
+                  AddToFavoriteOrRejectedEvent(
+                      sId: id, petType: "Disliked", petRef: pet.sId));
+            } else if (orientation == CardSwipeOrientation.RIGHT) {
+              Pet pet = pets[index];
+              context.read<SwipeFetchingBloc>().add(
+                  AddToFavoriteOrRejectedEvent(
+                      sId: id, petType: "Liked", petRef: pet.sId));
+            }
+
+            if (index + 1 == pets.length) {
+              context.read<SwipeFetchingBloc>().add(SwipingDisableEvent());
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget noMorePets() {
+    double size = MediaQuery.of(context).size.width / 1.1;
+
+    return Align(
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            "Brak nowych ogłoszeń",
+            style: TextStyle(fontSize: 28),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            "Wróć za jakiś czas",
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w300),
+          ),
+          Container(
+            width: size,
+            height: size,
+            child: Lottie.asset('images/anim2.json'),
+          )
+        ],
+      ),
+    );
   }
 
   Widget getBottomSheet(
@@ -364,6 +422,12 @@ class _ExampleHomePageState extends State<SwipeScreen>
         limit: 8,
         page: countPages,
         id: id));
+  }
+
+  @override
+  void dispose() {
+    _interstitialAd.dispose();
+    super.dispose();
   }
 }
 

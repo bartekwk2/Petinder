@@ -58,7 +58,7 @@ class AuthScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'Petindera',
+                        'Petdoption',
                         style: TextStyle(
                           fontFamily: "Poppins",
                           fontWeight: FontWeight.w600,

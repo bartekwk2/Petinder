@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class PetProfilePage extends StatefulWidget {
   final Pet pet;
@@ -38,9 +39,13 @@ class _ProfilePageState extends State<PetProfilePage>
   Pet pet;
   String myId = "";
 
+  bool addReady = false;
+  BannerAd add;
+
   @override
   void initState() {
     super.initState();
+    add = addAd();
     myId = Hive.box("isLogin").get("id");
     _controllerScroll = ScrollController();
 
@@ -391,6 +396,7 @@ class _ProfilePageState extends State<PetProfilePage>
                           SizedBox(
                             height: 10,
                           ),
+                          decideAdd()
                         ],
                       ),
                     ),
@@ -635,9 +641,48 @@ class _ProfilePageState extends State<PetProfilePage>
     }
   }
 
+  BannerAd addAd() {
+    BannerAd ad = BannerAd(
+      adUnitId: "ca-app-pub-2430907631837756/2000618168",
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: AdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            addReady = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          print('Ad load failed (code=${error.code} message=${error.message})');
+        },
+      ),
+    );
+    ad.load();
+    return ad;
+  }
+
+  Widget decideAdd() {
+    if (addReady) {
+      return Padding(
+        padding: EdgeInsets.only(bottom: 15, top: 15),
+        child: Container(
+          width: 320,
+          height: 50,
+          child: AdWidget(
+            ad: add,
+          ),
+        ),
+      );
+    } else {
+      return SizedBox();
+    }
+  }
+
   @override
   void dispose() async {
     super.dispose();
+    add.dispose();
     pet.numberOfViews += 1;
     Future.delayed(Duration.zero, () async {
       updatePetViews(pet.sId).then((value) => print(value));

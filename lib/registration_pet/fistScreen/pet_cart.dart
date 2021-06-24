@@ -35,11 +35,13 @@ class PetCart extends StatelessWidget {
                 Flexible(
                   child: Container(
                     height: 50,
-                    child: Text(
-                      petName.name,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 17,
+                    child: Center(
+                      child: Text(
+                        petName.name,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ),

@@ -24,10 +24,7 @@ class BotttomNavigationBloc
       BottomNavigationEvent event) async* {
     if (event is ChooseViewEvent) {
       bool isAdded = event.isAdded ?? false;
-      yield state.copyWith(
-        pageChosen: event.viewIndex,
-        isAdded : isAdded
-      );
+      yield state.copyWith(pageChosen: event.viewIndex, isAdded: isAdded);
       var chatBox = Hive.box("Chat");
       if (event.viewIndex == 4) {
         await chatBox.put("isOpen", true);
@@ -35,10 +32,10 @@ class BotttomNavigationBloc
         await chatBox.put("isOpen", false);
       }
     } else if (event is InitialNavigationEvent) {
+      Future.delayed(Duration(milliseconds: 300));
       Box locationBox = Hive.box("Location");
       await locationBox.put("newLocation", false);
       dynamic user = await bottomNavigationRepository.getUserInfo();
-      //yield state.copyWith(user: user);
       dynamic myPosition = locationBox.get("positionMap");
       dynamic country = locationBox.get("country");
       dynamic city = locationBox.get("city");

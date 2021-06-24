@@ -15,11 +15,64 @@
       },
       "oauth_client": [
         {
+          "client_id": "180699060248-4vh50ebn71188mm9rr8ge6hdkihfsh1s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.GoogleMaps",
+            "certificate_hash": "872ff83bcc43a71af009632d0dad5c03c1a89490"
+          }
+        },
+        {
           "client_id": "180699060248-g942k0jf6njp8csol9c334sg3ask65tr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.GoogleMaps",
             "certificate_hash": "06072cad42bafca8dd722aa30ac2e9512ff424d5"
+          }
+        },
+        {
+          "client_id": "180699060248-vt7ai1q78l8m31g80qpim5usv3qorls8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALqPLVBJ2coZVjOC-w2eOAk-vWHPZDI-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "180699060248-vt7ai1q78l8m31g80qpim5usv3qorls8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:180699060248:android:6a3d22c3bd77252651cb6d",
+        "android_client_info": {
+          "package_name": "com.mysuper.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "180699060248-6hslgfi0h1ht7nodfmgbgbrke4vv8qsa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mysuper.app",
+            "certificate_hash": "06072cad42bafca8dd722aa30ac2e9512ff424d5"
+          }
+        },
+        {
+          "client_id": "180699060248-n24khql7k8ql0923omm6okqeibpj1adt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mysuper.app",
+            "certificate_hash": "872ff83bcc43a71af009632d0dad5c03c1a89490"
           }
         },
         {

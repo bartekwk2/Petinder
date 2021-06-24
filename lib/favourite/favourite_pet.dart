@@ -2,6 +2,7 @@ import 'package:Petinder/common/pet_card.dart';
 import 'package:Petinder/favourite/favourtie_pet_repository.dart';
 import 'package:Petinder/navigation/router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class FavouritePetScreen extends StatefulWidget {
   @override
@@ -25,7 +26,7 @@ class _FavouritePetState extends State<FavouritePetScreen>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(75.0),
+          preferredSize: Size.fromHeight(95.0),
           child: AppBar(
             backgroundColor: Colors.black,
             leading: Padding(
@@ -56,7 +57,13 @@ class _FavouritePetState extends State<FavouritePetScreen>
               ],
               controller: _tabController,
             ),
-            title: null,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Twoje zwierzaki"),
+                SizedBox(width: 45,)
+              ],
+            ),
           ),
         ),
         body: TabBarView(

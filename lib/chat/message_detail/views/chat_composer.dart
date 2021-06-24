@@ -38,7 +38,7 @@ class _ChatComposerState extends State<ChatComposer> {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.attach_file, color: Colors.grey[500], size: 25),
+                  Opacity(opacity: 0,child: Icon(Icons.attach_file, color: Colors.grey[500], size: 25)),
                   SizedBox(
                     width: 10,
                   ),

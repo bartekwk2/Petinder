@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:lottie/lottie.dart';
 
 class ThirdScreen extends StatefulWidget {
   @override
@@ -30,27 +31,54 @@ class _ThirdScreenState extends State<ThirdScreen> {
           inject<RefreshPetMainBloc>().newRefresh(true);
         }
       }, builder: (context, registrationState) {
-        return ListView(
-          physics: AlwaysScrollableScrollPhysics(),
+        final height = MediaQuery.of(context).size.height;
+        return Stack(
           children: [
-            makeTitle("Zdrowie"),
-            healthChooser(registrationState),
-            SizedBox(
-              height: 20,
+            ListView(
+              physics: AlwaysScrollableScrollPhysics(),
+              children: [
+                makeTitle("Zdrowie"),
+                healthChooser(registrationState),
+                SizedBox(
+                  height: 20,
+                ),
+                makeTitle("Charakter"),
+                characterChooser(registrationState),
+                SizedBox(
+                  height: 10,
+                ),
+                submitButton(registrationState),
+                SizedBox(
+                  height: 80,
+                ),
+              ],
             ),
-            makeTitle("Charakter"),
-            characterChooser(registrationState),
-            SizedBox(
-              height: 10,
-            ),
-            submitButton(registrationState),
-            SizedBox(
-              height: 30,
-            ),
+            Positioned(
+                bottom: height / 4,
+                left: 0,
+                right: 0,
+                child: loadingScreen(registrationState.loadingSubmit))
           ],
         );
       });
     });
+  }
+
+  Widget loadingScreen(bool show) {
+    if (show) {
+      final size = MediaQuery.of(context).size.width / 1.8;
+      return Column(
+        children: [
+          Container(
+            width: size,
+            height: size,
+            child: Lottie.asset('images/anim.json'),
+          )
+        ],
+      );
+    } else {
+      return SizedBox();
+    }
   }
 
   Widget submitButton(RegistrationPetState registrationState) {

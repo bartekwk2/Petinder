@@ -111,11 +111,9 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   Future<void> handleLocation() async {
     Box locationBox = Hive.box("Location");
     bool newLocation = locationBox.get("newLocation");
-    print("JAK $newLocation");
     bool firstTime = true;
     if (newLocation) {
       Hive.box("IsLogin").put("IsLogin", true);
-
       Navigator.pushNamed(context, RouteConstant.dashboard);
     } else {
       locationBox.watch()
@@ -140,7 +138,6 @@ class _WelcomeScreenState extends State<WelcomeScreen>
             onTap: () async {
               var id = await inject<GoogleSignInRepository>().handleSignIn();
               if (id.isNotEmpty) {
-                print("b");
                 await handleLocation();
               }
             },
@@ -212,13 +209,13 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 padding: const EdgeInsets.only(top: 1.0),
                 child: Align(
                     alignment: Alignment.topCenter,
-                    child: Text("Petinder",
+                    child: Text("Petdoption",
                         style: TextStyle(
                             fontSize: 40,
                             fontFamily: "Poppins",
                             fontWeight: FontWeight.w600)))),
             Padding(
-                padding: const EdgeInsets.only(top: 50.0, right: 6),
+                padding: const EdgeInsets.only(top: 55.0, right: 6),
                 child: Align(
                     alignment: Alignment.topCenter,
                     child: Text("Aplikacja adopcyjna",

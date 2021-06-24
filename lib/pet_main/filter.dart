@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sidekick/flutter_sidekick.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class PetMainFilter extends StatefulWidget {
   @override
@@ -19,6 +20,14 @@ class PetMainFilter extends StatefulWidget {
 }
 
 class _PetMainFilterState extends State<PetMainFilter> {
+  bool addReady = false;
+  BannerAd add;
+  @override
+  void initState() {
+    add = addAd();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -38,100 +47,110 @@ class _PetMainFilterState extends State<PetMainFilter> {
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: ListView(
-                    children: <Widget>[
-                      BlocBuilder<BreedChooseBloc, BreedChooseState>(
-                        builder: (context, state) {
-                          if (state is PetChosenState) {
-                            context.read<PetMainBloc>().add(
-                                ChooseBreedEventFilter(
-                                    breedName: state.petName.name));
-                            return Column(
-                              children: [
-                                Row(
+                  child: Stack(
+                    children: [
+                      ListView(
+                        children: <Widget>[
+                          BlocBuilder<BreedChooseBloc, BreedChooseState>(
+                            builder: (context, state) {
+                              if (state is PetChosenState) {
+                                context.read<PetMainBloc>().add(
+                                    ChooseBreedEventFilter(
+                                        breedName: state.petName.name));
+                                return Column(
                                   children: [
-                                    makeTitle("Rasa"),
-                                  ],
-                                ),
-                                Stack(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                      child: Hero(
-                                          tag: state.petName.name,
-                                          child:
-                                              PetCart(petName: state.petName)),
+                                    Row(
+                                      children: [
+                                        makeTitle("Rasa"),
+                                      ],
                                     ),
-                                    GestureDetector(
-                                        onTap: () {
-                                          context
-                                              .read<BreedChooseBloc>()
-                                              .add(PetNotChosenEvent());
-                                        },
-                                        child: Align(
-                                            alignment: Alignment.topRight,
-                                            child: Icon(
-                                              Icons.remove_circle,
-                                              size: 24,
-                                            )))
+                                    Stack(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20),
+                                          child: Hero(
+                                              tag: state.petName.name,
+                                              child: PetCart(
+                                                  petName: state.petName)),
+                                        ),
+                                        GestureDetector(
+                                            onTap: () {
+                                              context
+                                                  .read<BreedChooseBloc>()
+                                                  .add(PetNotChosenEvent());
+                                            },
+                                            child: Align(
+                                                alignment: Alignment.topRight,
+                                                child: Icon(
+                                                  Icons.remove_circle,
+                                                  size: 24,
+                                                )))
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 25,
+                                    )
                                   ],
-                                ),
-                                SizedBox(
-                                  height: 25,
-                                )
-                              ],
-                            );
-                          } else {
-                            context
-                                .read<PetMainBloc>()
-                                .add(ChooseBreedEventFilter(breedName: ""));
-                            return SizedBox(
-                              height: 0,
-                            );
-                          }
-                        },
+                                );
+                              } else {
+                                context
+                                    .read<PetMainBloc>()
+                                    .add(ChooseBreedEventFilter(breedName: ""));
+                                return SizedBox(
+                                  height: 0,
+                                );
+                              }
+                            },
+                          ),
+                          makeTitle("Pochodzenie"),
+                          ownerTypeChooser(context, false,
+                              petMainState: petMainState),
+                          SizedBox(
+                            height: 25,
+                          ),
+                          makeTitle("Wiek"),
+                          ageSlider(context, false, petMainState: petMainState),
+                          SizedBox(
+                            height: 35,
+                          ),
+                          makeTitle("Płeć"),
+                          genderChooser(context, false,
+                              petMainState: petMainState),
+                          SizedBox(
+                            height: 25,
+                          ),
+                          makeTitle("Gatunek"),
+                          Container(
+                            height: 140,
+                            child: ListView.builder(
+                              itemCount: categoryList.length,
+                              scrollDirection: Axis.horizontal,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                var category = categoryList[index];
+                                return petCategory(
+                                    category, index, context, false,
+                                    petMainState: petMainState);
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          makeTitle("Charakter"),
+                          allPetCharacterUpper(sourceBuilderDelegates),
+                          allPetCharacterLower(
+                              targetBuilderDelegates, petMainState),
+                          SizedBox(
+                            height: 20,
+                          ),
+                        ],
                       ),
-                      makeTitle("Pochodzenie"),
-                      ownerTypeChooser(context, false,
-                          petMainState: petMainState),
-                      SizedBox(
-                        height: 25,
-                      ),
-                      makeTitle("Wiek"),
-                      ageSlider(context, false, petMainState: petMainState),
-                      SizedBox(
-                        height: 35,
-                      ),
-                      makeTitle("Płeć"),
-                      genderChooser(context, false, petMainState: petMainState),
-                      SizedBox(
-                        height: 25,
-                      ),
-                      makeTitle("Gatunek"),
-                      Container(
-                        height: 140,
-                        child: ListView.builder(
-                          itemCount: categoryList.length,
-                          scrollDirection: Axis.horizontal,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            var category = categoryList[index];
-                            return petCategory(category, index, context, false,
-                                petMainState: petMainState);
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      makeTitle("Charakter"),
-                      allPetCharacterUpper(sourceBuilderDelegates),
-                      allPetCharacterLower(
-                          targetBuilderDelegates, petMainState),
-                      SizedBox(
-                        height: 20,
-                      ),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: decideAdd(),
+                      )
                     ],
                   ),
                 ),
@@ -142,7 +161,6 @@ class _PetMainFilterState extends State<PetMainFilter> {
       }),
     );
   }
-
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
@@ -200,32 +218,34 @@ class _PetMainFilterState extends State<PetMainFilter> {
       List<SidekickBuilderDelegate<String>> sourceBuilderDelegates) {
     return ConstrainedBox(
       constraints: BoxConstraints(minHeight: 350.0),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(10,5,10,0),
-        child: Wrap(
-          spacing: 8.0,
-          runSpacing: 8.0,
-          children: sourceBuilderDelegates.map((builderDelegate) {
-            return builderDelegate.build(
-              context,
-              GestureDetector(
-                onTap: () {
-                  builderDelegate.state.move(builderDelegate.message);
+      child: Transform.translate(
+        offset: Offset(0, -40),
+        child: Center(
+          child: Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            children: sourceBuilderDelegates.map((builderDelegate) {
+              return builderDelegate.build(
+                context,
+                GestureDetector(
+                  onTap: () {
+                    builderDelegate.state.move(builderDelegate.message);
 
-                  context.read<PetMainBloc>().add(
-                      AddPetCharacter(petCharacter: builderDelegate.message));
-                },
-                child: petCharacterUpper(
-                  builderDelegate.message,
-                  Common.images[builderDelegate.message],
+                    context.read<PetMainBloc>().add(
+                        AddPetCharacter(petCharacter: builderDelegate.message));
+                  },
+                  child: petCharacterUpper(
+                    builderDelegate.message,
+                    Common.images[builderDelegate.message],
+                  ),
                 ),
-              ),
-              animationBuilder: (animation) => CurvedAnimation(
-                parent: animation,
-                curve: FlippedCurve(Curves.easeOut),
-              ),
-            );
-          }).toList(),
+                animationBuilder: (animation) => CurvedAnimation(
+                  parent: animation,
+                  curve: FlippedCurve(Curves.easeOut),
+                ),
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
@@ -235,46 +255,49 @@ class _PetMainFilterState extends State<PetMainFilter> {
       PetMainState petMainState) {
     double width = MediaQuery.of(context).size.width;
     print(width);
-    return Material(
-      type: MaterialType.transparency,
-      child: Container(
-          width: width * 0.8,
-          height: 100,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20.0),
-              shape: BoxShape.rectangle,
-              color: Colors.white12.withOpacity(1.0),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: Colors.black38,
-                  blurRadius: 15.0,
-                  offset: new Offset(0.0, 0.75),
-                ),
-              ],
-            ),
-            child: Stack(
-              children: [
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.all(6.0),
-                    child: Text(text,
-                        style: new TextStyle(
-                            color: Colors.black,
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold)),
+    return Transform.translate(
+      offset: Offset(0, -40),
+      child: Material(
+        type: MaterialType.transparency,
+        child: Container(
+            width: width * 0.8,
+            height: 100,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20.0),
+                shape: BoxShape.rectangle,
+                color: Colors.white12.withOpacity(1.0),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                    color: Colors.black38,
+                    blurRadius: 15.0,
+                    offset: new Offset(0.0, 0.75),
                   ),
-                ),
-                featureChooser(text, "dużo", petMainState, 0, "images/jed.png",
-                    false, width / 6.54, 31),
-                featureChooser(text, "średnio", petMainState, 1,
-                    "images/dw.png", true, width / 2.9, 31),
-                featureChooser(text, "mało", petMainState, 2, "images/trz.png",
-                    true, width / 6.54, 31),
-              ],
-            ),
-          )),
+                ],
+              ),
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Text(text,
+                          style: new TextStyle(
+                              color: Colors.black,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                  featureChooser(text, "dużo", petMainState, 0,
+                      "images/jed.png", false, width / 6.54, 31),
+                  featureChooser(text, "średnio", petMainState, 1,
+                      "images/dw.png", true, width / 2.9, 31),
+                  featureChooser(text, "mało", petMainState, 2,
+                      "images/trz.png", true, width / 6.54, 31),
+                ],
+              ),
+            )),
+      ),
     );
   }
 
@@ -357,5 +380,52 @@ class _PetMainFilterState extends State<PetMainFilter> {
         ),
       ),
     );
+  }
+
+
+  //-------------------------
+
+  BannerAd addAd() {
+    BannerAd ad = BannerAd(
+      adUnitId: "ca-app-pub-2430907631837756/4167562607",
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: AdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            addReady = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          print('Ad load failed (code=${error.code} message=${error.message})');
+        },
+      ),
+    );
+    ad.load();
+    return ad;
+  }
+
+  Widget decideAdd() {
+    if (addReady) {
+      return Padding(
+        padding: EdgeInsets.only(bottom: 15, top: 15),
+        child: Container(
+          width: 320,
+          height: 50,
+          child: AdWidget(
+            ad: add,
+          ),
+        ),
+      );
+    } else {
+      return SizedBox();
+    }
+  }
+
+  @override
+  void dispose() {
+    add.dispose();
+    super.dispose();
   }
 }

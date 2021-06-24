@@ -17,6 +17,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class PetMainScreen extends StatefulWidget {
   @override
@@ -28,10 +29,21 @@ class _PetMainScreenState extends State<PetMainScreen> {
     initialScrollOffset: inject<PetPaginationRepository>().scrollOffset,
   );
   double offset = 0.0;
+  int adPeriod = 3;
   bool firstTime = true;
+
+
+  List<BannerAd> ads = [];
+  List<bool> adsReady = [];
 
   jumpUp() {
     _scrollController.jumpTo(0);
+  }
+
+  @override
+  void initState() {
+    canShowAdd(0);
+    super.initState();
   }
 
   @override
@@ -40,7 +52,7 @@ class _PetMainScreenState extends State<PetMainScreen> {
       child: Scaffold(
         backgroundColor: Color(0xffF2F2F0),
         body: BlocConsumer<PetPaginationBloc, PetPaginationState>(
-            listener: (context, petPaginationState) {
+            listener: (context, petPaginationState) async {
           if (petPaginationState.noMorePets) {
             Scaffold.of(context).showSnackBar(
                 SnackBar(content: Text('Nie ma więcej zwierzaków')));
@@ -63,6 +75,16 @@ class _PetMainScreenState extends State<PetMainScreen> {
                 firstTime = false;
               }
             }
+            /*
+            else if (petPaginationState.newQuery) {
+              Future.delayed(Duration(milliseconds: 300), () {
+                setState(() {
+                  ads = [];
+                  adsReady = [];
+                });
+              });
+            }
+            */
           }
           return;
         }, builder: (context, petPaginationState) {
@@ -93,11 +115,7 @@ class _PetMainScreenState extends State<PetMainScreen> {
                 ),
               ),
               SliverToBoxAdapter(child: addPet(context)),
-              SliverToBoxAdapter(
-                child: SizedBox(
-                  height: 15,
-                ),
-              ),
+              SliverToBoxAdapter(child: addShow(0)),
               SliverPersistentHeader(
                 pinned: true,
                 delegate: SliverAppBarDelegate(
@@ -151,33 +169,6 @@ class _PetMainScreenState extends State<PetMainScreen> {
     } else {
       return SliverToBoxAdapter(child: SizedBox());
     }
-  }
-
-  Widget petsFetched(PetPaginationState petPaginationState) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (
-          BuildContext context,
-          int index,
-        ) {
-          return GestureDetector(
-            onTap: () {
-              var pet = petPaginationState.pets[index];
-              var arguments = {"pet": pet, 'swipe': false};
-              Navigator.of(context)
-                  .pushNamed(RouteConstant.profileDetail, arguments: arguments);
-            },
-            child: Hero(
-              tag: petPaginationState.pets[index].name,
-              child: PetCard(
-                pet: petPaginationState.pets[index],
-              ),
-            ),
-          );
-        },
-        childCount: petPaginationState.pets.length,
-      ),
-    );
   }
 
   Widget userInfo(BuildContext context) {
@@ -491,11 +482,128 @@ class _PetMainScreenState extends State<PetMainScreen> {
     });
   }
 
+  Widget petsFetched(PetPaginationState petPaginationState) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (
+          BuildContext context,
+          int index,
+        ) {
+          return GestureDetector(
+            onTap: () {
+              var pet = petPaginationState.pets[index];
+              var arguments = {"pet": pet, 'swipe': false};
+              Navigator.of(context)
+                  .pushNamed(RouteConstant.profileDetail, arguments: arguments);
+            },
+            child: Hero(
+              tag: petPaginationState.pets[index].name,
+              child: PetCard(
+                pet: petPaginationState.pets[index],
+              ),
+            ),
+          );
+        },
+        childCount: petPaginationState.pets.length,
+      ),
+    );
+  }
+
+  BannerAd addAd() {
+    adsReady.add(false);
+    BannerAd ad = BannerAd(
+      adUnitId: "ca-app-pub-2430907631837756/7611187436",
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: AdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            adsReady[adsReady.length - 1] = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          print('Ad load failed (code=${error.code} message=${error.message})');
+        },
+      ),
+    );
+    ad.load();
+    return ad;
+  }
+
+  bool canShowAdd(int index) {
+    if (adsReady.length > index) {
+      return adsReady[index];
+    } else {
+      ads.add(addAd());
+      return false;
+    }
+  }
+
+  Widget addShow(int index) {
+    return canShowAdd(index)
+        ? Padding(
+            padding: EdgeInsets.only(bottom: 15, top: 15),
+            child: Container(
+              width: 320,
+              height: 50,
+              child: AdWidget(
+                ad: ads[index],
+              ),
+            ),
+          )
+        : SizedBox();
+  }
+
   @override
   void dispose() {
+    ads.forEach((element) {
+      element.dispose();
+    });
     if (offset != 0.0) {
       inject<PetPaginationRepository>().scrollOffset = offset;
     }
     super.dispose();
   }
+
+  /*
+  Widget petsFetched(PetPaginationState petPaginationState) {
+    int count = petPaginationState.pets.length + (ads.length - 1);
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (
+          BuildContext context,
+          int index,
+        ) {
+          if (index % adPeriod == 0 && index != 0) {
+            return addShow(1 + index ~/ adPeriod);
+          } else {
+            int petIndex = decideItemIndex(index, adPeriod, count);
+            return GestureDetector(
+              onTap: () {
+                var pet = petPaginationState.pets[petIndex];
+                var arguments = {"pet": pet, 'swipe': false};
+                Navigator.of(context).pushNamed(RouteConstant.profileDetail,
+                    arguments: arguments);
+              },
+              child: petPaginationState.pets.length > petIndex
+                  ? Hero(
+                      tag: petPaginationState.pets[petIndex].name,
+                      child: PetCard(
+                        pet: petPaginationState.pets[petIndex],
+                      ),
+                    )
+                  : SizedBox(),
+            );
+          }
+        },
+        childCount: count,
+      ),
+    );
+  }
+    int decideItemIndex(int rawIndex, int adPeriod, int adsLength) {
+    int index = rawIndex - rawIndex ~/ (adPeriod);
+    return index;
+  }
+  */
 }

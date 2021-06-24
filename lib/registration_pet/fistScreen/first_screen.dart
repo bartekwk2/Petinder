@@ -27,6 +27,7 @@ class _FirstScreenState extends State<FirstScreen> {
   FocusNode _focusNode;
   FocusNode _focusNode2;
 
+
   @override
   void initState() {
     super.initState();
@@ -160,7 +161,7 @@ class _FirstScreenState extends State<FirstScreen> {
               makeTitle("Opis"),
               _descForm(context, registrationState),
               SizedBox(
-                height: 40,
+                height: 80,
               ),
             ],
           ),
@@ -467,4 +468,5 @@ class _FirstScreenState extends State<FirstScreen> {
           );
         });
   }
+
 }

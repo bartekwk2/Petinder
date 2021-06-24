@@ -3,6 +3,7 @@ import 'package:Petinder/registration_pet/thirdScreen/third_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'fistScreen/first_screen.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class PetRegistration extends StatefulWidget {
   PetRegistration({Key key}) : super(key: key);
@@ -12,12 +13,15 @@ class PetRegistration extends StatefulWidget {
 }
 
 class _PetRegistrationState extends State<PetRegistration> {
-  PageController _controller = PageController(
-    initialPage: 0,viewportFraction: 0.99
-  );
+  PageController _controller =
+      PageController(initialPage: 0, viewportFraction: 0.99);
   Widget _firstScreen;
   Widget _secondScreen;
   Widget _thirdScreen;
+
+  bool addReady = false;
+  BannerAd add;
+
   @override
   void dispose() {
     _controller.dispose();
@@ -39,6 +43,7 @@ class _PetRegistrationState extends State<PetRegistration> {
 
   @override
   void initState() {
+    add = addAd();
     _firstScreen = FirstScreen();
     _secondScreen = SecondScreen();
     _thirdScreen = ThirdScreen();
@@ -48,42 +53,48 @@ class _PetRegistrationState extends State<PetRegistration> {
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: Column(children: [
-        Container(
-            padding: EdgeInsets.only(
-              top: 52.0,
-              left: 24.0,
-              right: 24.0,
-            ),
-            width: _width,
-            child: Column(
-              children: <Widget>[
-                Row(
-                  children: _iconViews(),
+      body: Stack(
+        children: [
+          Column(children: [
+            Container(
+                padding: EdgeInsets.only(
+                  top: 52.0,
+                  left: 24.0,
+                  right: 24.0,
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                if (_titles != null)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: _titleViews(),
-                  ),
-              ],
-            )),
-        Expanded(
-            child: PageView(
-          controller: _controller,
-          onPageChanged: (page) {
-            setState(() {
-              _curStep = page + 1;
-            });
-          },
-          children: [
-            _firstScreen,_secondScreen,_thirdScreen
-          ],
-        ))
-      ]),
+                width: _width,
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: _iconViews(),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    if (_titles != null)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: _titleViews(),
+                      ),
+                  ],
+                )),
+            Expanded(
+                child: PageView(
+              controller: _controller,
+              onPageChanged: (page) {
+                setState(() {
+                  _curStep = page + 1;
+                });
+              },
+              children: [_firstScreen, _secondScreen, _thirdScreen],
+            ))
+          ]),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: decideAdd(),
+          )
+        ],
+      ),
     );
   }
 
@@ -142,5 +153,45 @@ class _PetRegistrationState extends State<PetRegistration> {
       list.add(Text(text, style: TextStyle(color: _activeColor)));
     });
     return list;
+  }
+
+  //-------------------------
+
+  BannerAd addAd() {
+    BannerAd ad = BannerAd(
+      adUnitId: "ca-app-pub-2430907631837756/7787049897",
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: AdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            addReady = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          print('Ad load failed (code=${error.code} message=${error.message})');
+        },
+      ),
+    );
+    ad.load();
+    return ad;
+  }
+
+  Widget decideAdd() {
+    if (addReady) {
+      return Padding(
+        padding: EdgeInsets.only(bottom: 15, top: 15),
+        child: Container(
+          width: 320,
+          height: 50,
+          child: AdWidget(
+            ad: add,
+          ),
+        ),
+      );
+    } else {
+      return SizedBox();
+    }
   }
 }
