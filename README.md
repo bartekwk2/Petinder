@@ -47,8 +47,10 @@ Architektura : Bloc Pattern
 </p>
 <br>
 <p align="center">
+          <img src="https://user-images.githubusercontent.com/77553097/131704675-f35dee07-c765-410e-8ed6-b8d6efe4b4dc.jpg" width="200" title="hover text">
       <img src="https://user-images.githubusercontent.com/77553097/131703634-66f3fc57-021c-49c9-9294-73e1b6503d99.jpg" width="200" title="hover text">
       <img src="https://user-images.githubusercontent.com/77553097/131703627-16bf5caf-bc88-46e8-b285-7b6fc193c4fd.jpg" width="200" title="hover text">
+          <img src="https://user-images.githubusercontent.com/77553097/131704681-b8e068ed-dd2d-4742-9e2c-2e111d623042.jpg" width="200" title="hover text">
 </p>
 <br>
 <h3>Kontynuacja projektu: </h3>
